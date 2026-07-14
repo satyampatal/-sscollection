@@ -1,0 +1,82 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { useUiStore } from "@/store/useUiStore";
+
+export default function CustomLoader() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const progressRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLHeadingElement>(null);
+  const [percent, setPercent] = useState(0);
+  const setLoadingComplete = useUiStore((state) => state.setLoadingComplete);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({
+        onComplete: () => {
+          setLoadingComplete(true);
+        },
+      });
+
+      // Pure programmatic loader calculation simulation
+      const obj = { value: 0 };
+      tl.to(obj, {
+        value: 100,
+        duration: 2.2,
+        ease: "power4.inOut",
+        onUpdate: () => {
+          const current = Math.floor(obj.value);
+          setPercent(current);
+          if (progressRef.current) {
+            progressRef.current.style.width = `${current}%`;
+          }
+        },
+      });
+
+      tl.to([textRef.current, progressRef.current?.parentElement], {
+        opacity: 0,
+        y: -40,
+        duration: 0.6,
+        stagger: 0.1,
+        ease: "power3.in",
+      });
+
+      tl.to(containerRef.current, {
+        clipPath: "polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)",
+        duration: 1.0,
+        ease: "power4.inOut",
+      });
+    });
+
+    return () => ctx.revert();
+  }, [setLoadingComplete]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center"
+      style={{ clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
+    >
+      <div className="w-64 relative overflow-hidden mb-4">
+        <h1
+          ref={textRef}
+          className="text-2xl font-light tracking-[0.4em] text-center text-metallic uppercase select-none"
+        >
+          S&S LUXURY
+        </h1>
+      </div>
+      
+      <div className="w-48 h-[1px] bg-neutral-900 relative">
+        <div
+          ref={progressRef}
+          className="absolute top-0 left-0 h-full bg-white w-0 shadow-[0_0_8px_#fff]"
+        />
+      </div>
+      
+      <span className="text-[10px] font-mono tracking-widest text-neutral-500 mt-2">
+        {percent}%
+      </span>
+    </div>
+  );
+}

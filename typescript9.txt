@@ -1,0 +1,45 @@
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+import "./globals.css";
+import SmoothScroll from "@/components/layout/SmoothScroll";
+import CustomLoader from "@/components/ui/CustomLoader";
+import Navbar from "@/components/layout/Navbar";
+
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
+export const metadata: Metadata = {
+  title: "S&S | High Luxury Men's Fashion",
+  description: "Experience the definitive benchmark in modern sartorial excellence.",
+  metadataBase: new URL("https://ss-luxury.com"),
+  openGraph: {
+    title: "S&S | High Luxury Men's Fashion",
+    description: "Experience the definitive benchmark in modern sartorial excellence.",
+    images: [{ url: "/og-image.jpg", width: 1200, height: 630 }],
+  },
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="premium-scrollbar">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-black text-white`}>
+        <CustomLoader />
+        <Navbar />
+        <SmoothScroll>
+          <main className="relative w-full z-10">{children}</main>
+        </SmoothScroll>
+      </body>
+    </html>
+  );
+}

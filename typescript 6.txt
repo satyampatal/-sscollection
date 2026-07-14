@@ -1,0 +1,38 @@
+"use client";
+
+import React, { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+export default function SmoothScroll({ children }: { children: React.ReactNode }) {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
+    
+    let ctx = gsap.context(() => {
+      const content = scrollContainerRef.current;
+      if (!content) return;
+
+      // Premium custom inertial layout engine implementation
+      gsap.set(content, { transformStyle: "preserve-3d", willChange: "transform" });
+      
+      ScrollTrigger.normalizeScroll(true);
+      
+      ScrollTrigger.create({
+        trigger: content,
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.2
+      });
+    });
+
+    return () => ctx.revert();
+  }, []);
+
+  return (
+    <div ref={scrollContainerRef} className="w-full relative min-h-screen">
+      {children}
+    </div>
+  );
+}

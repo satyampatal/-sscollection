@@ -1,0 +1,19 @@
+import { create } from "zustand";
+
+interface UiState {
+  isMenuOpen: boolean;
+  isCartOpen: boolean;
+  isLoadingComplete: boolean;
+  toggleMenu: () => void;
+  toggleCart: () => void;
+  setLoadingComplete: (status: boolean) => void;
+}
+
+export const useUiStore = create<UiState>((set) => ({
+  isMenuOpen: false,
+  isCartOpen: false,
+  isLoadingComplete: false,
+  toggleMenu: () => set((state) => ({ isMenuOpen: !state.isMenuOpen })),
+  toggleCart: () => set((state) => ({ isCartOpen: !state.isCartOpen })),
+  setLoadingComplete: (status) => set({ isLoadingComplete: status }),
+}));
